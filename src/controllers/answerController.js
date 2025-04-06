@@ -9,7 +9,12 @@ const answerController = {
    */
   async getAnswers(req, res, next) {
     try {
+      // Extract questionId from request parameters
       const { questionId } = req.params;
+      
+      if (!questionId) {
+        throw new AppError('Question ID is required', 400);
+      }
       
       // Check if question exists
       const questionDoc = await db.collection('questions').doc(questionId).get();
@@ -40,6 +45,11 @@ const answerController = {
   async createAnswer(req, res, next) {
     try {
       const { questionId } = req.params;
+      
+      if (!questionId) {
+        throw new AppError('Question ID is required', 400);
+      }
+      
       const answerData = req.body;
       
       // Validate required fields
@@ -88,6 +98,11 @@ const answerController = {
   async voteAnswer(req, res, next) {
     try {
       const { answerId } = req.params;
+      
+      if (!answerId) {
+        throw new AppError('Answer ID is required', 400);
+      }
+      
       const { value } = req.body;
       
       if (value !== 1 && value !== -1) {
