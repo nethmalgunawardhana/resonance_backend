@@ -16,7 +16,9 @@ const researchFundingABI = [
   "function deactivateProject(uint _id) public",
   "function fundProject(uint _id) public payable",
   "function withdraw(uint _id) public",
-  "function getProjectDetails(uint _id) public view returns (string memory, string memory, uint, address, bool)"
+  "function getProjectDetails(uint _id) public view returns (string memory, string memory, uint, address, bool)",
+  "function getContractBalance() public view returns (uint)",
+  "function withdrawFees() public",
 
 ];
 
@@ -30,7 +32,7 @@ async function createProject(name, description, recipient) {
       name, 
       description,
       recipient,
-      { value: parseEther('5') } // Fee for creating a project
+      { value: parseEther('0.005') } // Fee for creating a project
     );
     await tx.wait(); // Wait for the transaction to be mined
     return { success: true, transactionHash: tx.hash };
@@ -78,5 +80,30 @@ async function withdraw(projectId) {
   }
 }
 
+async function getContractBalance() {
+  try {
+    const balance = await researchFundingContract.getContractBalance();
+    console.log(`raw balance: ${balance}`);
+    const formattedBalance = ethers.formatEther(balance);
+    console.log(`formatted balance: ${formattedBalance}`);
+    return formattedBalance;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to fetch contract balance');
+  }
+  
+}
 
-module.exports = { createProject, fundProject, getProjectDetails, withdraw };
+async function withdrawFees() {
+  try {
+    const tx = await researchFundingContract.withdrawFees();
+    await tx.wait(); // Wait for the transaction to be mined
+    return { success: true, transactionHash: tx.hash };
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to withdraw fees');
+  }
+}
+
+
+module.exports = { createProject, fundProject, getProjectDetails, withdraw, getContractBalance, withdrawFees};
