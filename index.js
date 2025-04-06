@@ -1,17 +1,43 @@
-// index.js
 const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const dotenv = require('dotenv');
+const routes = require('./src/routes/index');
+const { errorHandler } = require('./src/middleware/errorHandler');
+
+// Load environment variables
+dotenv.config();
+
+// Initialize Express app
 const app = express();
-const PORT = 5000;
+const port = process.env.PORT || 5000;
 
-// Middleware to parse JSON
+// Middleware
+app.use(cors());
+app.use(helmet());
+app.use(morgan('dev'));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Sample route
-app.get('/', (req, res) => {
-  res.send('Hello from Node.js backend!');
+// API Routes
+app.use('/api', routes);
+
+// Error handling middleware
+app.use(errorHandler);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: 'Not Found',
+    message: `Route ${req.originalUrl} not found`
+  });
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
+
+module.exports = app;
