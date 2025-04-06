@@ -3,12 +3,13 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+dotenv.config();
 const routes = require('./src/routes/index');
 const { errorHandler } = require('./src/middleware/errorHandler');
 const researcherRoutes = require('./src/routes/researcher');
 
 // Load environment variables
-dotenv.config();
+
 
 // Initialize Express app
 const app = express();
