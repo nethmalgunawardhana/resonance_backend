@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const routes = require('./src/routes/index');
 const { errorHandler } = require('./src/middleware/errorHandler');
+const researcherRoutes = require('./src/routes/researcher');
 
 // Load environment variables
 
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // API Routes
 app.use('/api', routes);
+app.use('/api/researchers', researcherRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
