@@ -27,17 +27,27 @@ const blockchainController = {
 
   async fundProjectRecord(req, res, next) {
     try {
-      const { projectId, amount, transactionHash } = req.body;
 
-      console.log(`Project ${projectId} funded with ${amount} ETH`);
-      console.log(`Transaction hash: ${transactionHash}`);
+      const { projectDocId, fundingProjectId, amountEth, transactionHash } = req.body;
 
-    //   await db.collection('fundingLogs').add({
-    //     projectId,
-    //     amount,
-    //     transactionHash,
-    //     createdAt: new Date().toISOString()
-    //   });
+      if (!projectDocId || !fundingProjectId || !amountEth || !transactionHash) {
+        console.log('Missing required fields' + projectDocId + fundingProjectId + amountEth + transactionHash);
+        throw new AppError('Missing required fields', 400);
+    }
+
+      // fundingTransactions subcollection
+      const fundingTransactionRef = db.collection('researchProjects').doc(projectDocId).collection('fundingTransactions');
+      const fundingTransactionDoc = {
+        fundingProjectId,
+        amountEth,
+        transactionHash,
+        createdAt: new Date().toISOString()
+      };
+
+       // Add the funding transaction to the subcollection
+       await fundingTransactionRef.add(fundingTransactionDoc);
+       console.log(`Funding transaction added to project ${projectDocId} with funding project id ${fundingProjectId}`);
+        
 
       res.status(200).json(ApiResponse.success({
         message: 'Transaction recorded successfully',
