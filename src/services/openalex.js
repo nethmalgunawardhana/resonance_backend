@@ -17,6 +17,26 @@ exports.fetchResearcherInfo = async (name) => {
         orchid: author.orcid,
         openalex_id: author.id,
         summary: author.summary_stats,
-        topics: author.topics.map(topic => topic.display_name),
+        // topics: author.topics.map(topic => topic.display_name),
+        works_api_url: author.works_api_url,
     };
+};
+
+exports.fetchResearchWorks = async (worksApiUrl) => {
+    try {
+        const response = await axios.get(worksApiUrl);
+        const works = response.data.results;
+
+        return works.map(work => ({
+            title: work.title,
+            url: work.doi,
+            publication_date: work.publication_date,
+            citation_count: work.cited_by_count,
+            type: work.type,
+            authors: work.authorships.map(author => author.author.display_name),
+        }));
+    } catch (error) {
+        console.error('Error fetching research works:', error.message);
+        return [];
+    }
 };

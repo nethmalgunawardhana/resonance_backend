@@ -1,4 +1,4 @@
-const { fetchResearcherInfo } = require('../services/openalex');
+const { fetchResearcherInfo, fetchResearchWorks } = require('../services/openalex');
 
 exports.getResearcher = async (req, res) => {
     const { name } = req.query;
@@ -8,6 +8,9 @@ exports.getResearcher = async (req, res) => {
         const researcherInfo = await fetchResearcherInfo(name);
         if (!researcherInfo) return res.status(404).json({ error: 'Researcher not found' });
 
+
+        const works = await fetchResearchWorks(researcherInfo.works_api_url);
+        console.log('Research Works:', works);
         res.status(200).json(researcherInfo);
     }
     catch (error) {
