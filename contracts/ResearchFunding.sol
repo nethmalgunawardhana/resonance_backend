@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 contract ResearchFunding {
     address public owner;
     uint public projectCount = 0;
-    uint public projectCreationFee = 0.005 ether; //Small fee to prevent spam
+    uint public projectCreationFee = 0.005 ether; // Small fee to prevent spam
     
     struct Project {
         uint id;
@@ -14,8 +14,19 @@ contract ResearchFunding {
         address payable recipient;
         bool isActive;
     }
+
+    struct Transaction {
+        uint projectId;
+        uint amount;
+        address user;
+        string txType; // "fund" or "withdraw"
+        uint timestamp;
+    }
     
     mapping(uint => Project) public projects;
+
+    Transaction[] public transactions;
+    mapping(uint => uint[]) public projectTransactions;
     
     event ProjectCreated(uint id, string name, address recipient, bool isActive);
     event Funded(uint id, uint amount, address donor);
@@ -56,34 +67,34 @@ contract ResearchFunding {
     }
     
     function createProject(
-    string memory _name,
-    string memory _description,
-    address payable _recipient // need to pass since owner (platform) can create on behalf of researcher
-) public payable {
-    require(msg.value >= projectCreationFee, "Insufficient fee for project creation");
-    
-    // Handle any excess payment
-    if (msg.value > projectCreationFee) {
-        payable(msg.sender).transfer(msg.value - projectCreationFee);
-    }
-    
-    // Ensure the recipient address is not the zero address
-    require(_recipient != address(0), "Invalid recipient address");
-    
-    projectCount++;
-    projects[projectCount] = Project({
-        id: projectCount,
-        name: _name,
-        description: _description,
-        currentFunding: 0,
-        recipient: _recipient, // Use passed recipient address
-        isActive: true // Starts active
-    });
-    
-    emit ProjectCreated(projectCount, _name, _recipient, true);
-}
+        string memory _name,
+        string memory _description,
+        address payable _recipient // need to pass since owner (platform) can create on behalf of researcher
+    ) public payable {
+        require(msg.value >= projectCreationFee, "Insufficient fee for project creation");
 
+        // Handle any excess payment
+        if (msg.value > projectCreationFee) {
+            payable(msg.sender).transfer(msg.value - projectCreationFee);
+        }
+
+        // Ensure the recipient address is not the zero address
+        require(_recipient != address(0), "Invalid recipient address");
+
+        projectCount++;
     
+        projects[projectCount] = Project({
+            id: projectCount,
+            name: _name,
+            description: _description,
+            currentFunding: 0,
+            recipient: _recipient, // Use passed recipient address
+            isActive: true // Starts active
+        });
+
+        emit ProjectCreated(projectCount, _name, _recipient, true);
+    }
+
     // Activate a project (only owner can do this)
     function activateProject(uint _id) public onlyOwner {
         require(!projects[_id].isActive, "Project is already active");
@@ -103,6 +114,20 @@ contract ResearchFunding {
         Project storage project = projects[_id];
         require(msg.value > 0, "Donation must be greater than 0");
         project.currentFunding += msg.value;
+        
+        // Create transaction record
+        uint txIndex = transactions.length;
+        transactions.push(Transaction({
+            projectId: _id,
+            amount: msg.value,
+            user: msg.sender,
+            txType: "fund",
+            timestamp: block.timestamp
+        }));
+        
+        // Store transaction index in project's transactions list
+        projectTransactions[_id].push(txIndex);
+        
         emit Funded(_id, msg.value, msg.sender);
     }
     
@@ -116,6 +141,19 @@ contract ResearchFunding {
         // Transfer funds to recipient
         (bool success, ) = project.recipient.call{value: amount}("");
         require(success, "Transfer failed");
+        
+        // Create transaction record
+        uint txIndex = transactions.length;
+        transactions.push(Transaction({
+            projectId: _id,
+            amount: amount,
+            user: project.recipient,
+            txType: "withdraw",
+            timestamp: block.timestamp
+        }));
+        
+        // Store transaction index in project's transactions list
+        projectTransactions[_id].push(txIndex);
         
         emit Withdrawn(_id, amount, project.recipient);
     }
@@ -136,6 +174,17 @@ contract ResearchFunding {
             project.recipient,
             project.isActive
         );
+    }
+    
+    function getProjectTransactions(uint _id) public view returns (Transaction[] memory) {
+        uint[] memory txIndexes = projectTransactions[_id];
+        Transaction[] memory result = new Transaction[](txIndexes.length);
+        
+        for (uint i = 0; i < txIndexes.length; i++) {
+            result[i] = transactions[txIndexes[i]];
+        }
+        
+        return result;
     }
     
     // Get the current balance of the contract (fees collected)

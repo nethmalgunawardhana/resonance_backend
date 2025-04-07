@@ -6,7 +6,8 @@ const {
   getProjectDetails,
   withdraw,
   getContractBalance,
-  withdrawFees
+  withdrawFees,
+  getProjectTransactions
 } = require('../services/researchFundingContractService');
 const { AppError } = require('../middleware/errorHandler');
 const { ApiResponse } = require('../utils/responseFormatter');
@@ -61,20 +62,37 @@ const blockchainController = {
   async getProjectDetails(req, res, next) {
     try {
       const projectId = req.params.id;
-      const projectDetails = await getProjectDetails(projectId);
+      
+      const [projectDetails, transactions] = await Promise.all([
+        getProjectDetails(projectId),
+        getProjectTransactions(projectId)
+     ]);
 
       const response = {
         name: projectDetails[0],
         description: projectDetails[1],
         currentFunding: projectDetails[2].toString(),
         recipient: projectDetails[3],
-        isActive: projectDetails[4]
+        isActive: projectDetails[4],
+        transactions: transactions
       };
 
       res.status(200).json(ApiResponse.success(response));
     } catch (error) {
       next(error);
     }
+  },
+
+
+  async getProjectTransactions(req, res, next) {
+
+    try {
+        const projectId = req.params.id;
+        const transactions = await getProjectTransactions(projectId);
+        res.status(200).json(ApiResponse.success(transactions));
+    } catch (error) {
+        next(error);
+    }    
   },
 
   async insecureTestingFundProject(req, res, next) {
