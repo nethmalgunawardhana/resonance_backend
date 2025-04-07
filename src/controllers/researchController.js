@@ -5,9 +5,16 @@ const createResearch = async (req, res) => {
   try {
     // Process the form data
     const processedData = processFormData(req);
+    console.log('Processed Data:', processedData);
+    // Save to Firestore
+    const userId = req.body.userId;
+    
+    if (!userId) {
+      return res.status(401).json({ message: 'User ID not found' });
+    }
     
     // Save to Firestore
-    const result = await saveResearch(processedData, req.user.uid, false);
+    const result = await saveResearch(processedData, userId, false);
     
     res.status(201).json(result);
   } catch (error) {
@@ -22,11 +29,14 @@ const saveResearchDraft = async (req, res) => {
     const processedData = processFormData(req);
     
     // Get user ID from auth if available, otherwise use a guest ID
-    const userId = req.user ? req.user.uid : 'guest';
+    const userId = req.body.userId;
+    
+    if (!userId) {
+      return res.status(401).json({ message: 'User ID not found' });
+    }
     
     // Save to Firestore as draft
     const result = await saveResearch(processedData, userId, true);
-    
     res.status(201).json(result);
   } catch (error) {
     console.error('Error saving research draft:', error);
