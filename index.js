@@ -2,6 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const dotenv = require('dotenv');
+const routes = require('./src/routes/index');
+const { errorHandler } = require('./src/middleware/errorHandler');
+const researcherRoutes = require('./src/routes/researcher');
+const projectRoutes = require('./src/routes/research.route');
 
 // Load environment variables
 const dotenv = require('dotenv');
@@ -24,6 +29,8 @@ app.use(express.urlencoded({ extended: true }));
 // API Routes
 app.use('/api', routes);
 app.use('/api/researchers', researcherRoutes);
+app.use('/api/research', projectRoutes);
+
 
 // Error handling middleware
 app.use(errorHandler);
