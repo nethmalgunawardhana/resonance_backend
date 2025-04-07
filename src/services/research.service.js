@@ -1,8 +1,8 @@
-const { db, admin } = require('../config/firebase');
+const { db } = require('../config/firebase');
 
 exports.getResearchProjectByIdService = async (id) => {
     try {
-      const docRef = db.collection('researchProjects').doc(id);
+      const docRef = db.collection('research').doc(id);
       const doc = await docRef.get();
   
       if (!doc.exists) return null;

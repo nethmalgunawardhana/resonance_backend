@@ -4,7 +4,7 @@ const { getResearchProjectByIdService } = require('../services/research.service'
 
 exports.getResearchProjects = async (req, res) => {
   try {
-    const snapshot = await db.collection('researchProjects').get();
+    const snapshot = await db.collection('research').get();
     const projects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.status(200).json(projects);
   } catch (error) {
@@ -17,7 +17,7 @@ exports.getResearchProjectById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const projectRef = db.collection('researchProjects').doc(id);
+    const projectRef = db.collection('research').doc(id);
     const projectDoc = await projectRef.get();
 
     if (!projectDoc.exists) {
