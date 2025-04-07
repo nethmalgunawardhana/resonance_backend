@@ -4,7 +4,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "contract-compile": "npx hardhat compile",            
+    "contract-deploy": "npx hardhat ignition deploy ./ignition/modules/ResearchFunding.js --network sepolia",
+    "contract-compile-deploy": "npx hardhat compile && npx hardhat ignition deploy ./ignition/modules/ResearchFunding.js --network sepolia",
+    "contract-dev": "npx hardhat compile && npx hardhat ignition deploy ./ignition/modules/ResearchFunding.js --network localhost"
+
   },
   "keywords": [],
   "author": "",
@@ -12,8 +17,10 @@
   "description": "",
   "dependencies": {
     "axios": "^1.8.4",
+    "@google/generative-ai": "^0.24.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
     "express": "^4.21.2",
     "firebase-admin": "^11.5.0",
     "helmet": "^6.0.1",
@@ -23,7 +30,10 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "^0.15.10",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "eslint": "^8.37.0",
+    "hardhat": "^2.22.19",
     "jest": "^29.5.0",
     "nodemon": "^2.0.22"
   }

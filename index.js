@@ -9,7 +9,11 @@ const researcherRoutes = require('./src/routes/researcher');
 const projectRoutes = require('./src/routes/research.route');
 
 // Load environment variables
+const dotenv = require('dotenv');
 dotenv.config();
+const routes = require('./src/routes/index');
+const { errorHandler } = require('./src/middleware/errorHandler');
+const researcherRoutes = require('./src/routes/researcher');
 
 // Initialize Express app
 const app = express();
@@ -26,6 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api', routes);
 app.use('/api/researchers', researcherRoutes);
 app.use('/api/research', projectRoutes);
+
 
 // Error handling middleware
 app.use(errorHandler);
