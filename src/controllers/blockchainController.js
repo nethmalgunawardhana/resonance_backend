@@ -37,7 +37,7 @@ const blockchainController = {
     }
 
       // fundingTransactions subcollection
-      const fundingTransactionRef = db.collection('researchProjects').doc(projectDocId).collection('fundingTransactions');
+      const fundingTransactionRef = db.collection('research').doc(projectDocId).collection('fundingTransactions');
       const fundingTransactionDoc = {
         fundingProjectId,
         amountEth,
