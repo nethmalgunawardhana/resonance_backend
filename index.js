@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const arxivRoutes = require('./src/routes/arxiv.route');
 
 const projectRoutes = require('./src/routes/research.route');
 
@@ -27,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api', routes);
 app.use('/api/researchers', researcherRoutes);
 app.use('/api/research', projectRoutes);
-
+app.use('/api', arxivRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
