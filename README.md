@@ -1,77 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎯 Resonance Frontend: Next.js Application
 
----------- SETUP INSTRUCTIONS ----------
-
-# 🎯 Node.js Backend for Stripe Payments & Firestore Integration
-
-This is a Node.js backend application designed to handle Stripe payment transactions and store related data in Firebase Firestore. It includes a secure Stripe webhook endpoint to automatically capture and log payment events.
+This is the Next.js frontend application for the Resonance project. It is a dynamic and responsive user interface built with Next.js and Tailwind CSS.
 
 ## 🚀 Features
 
-- ✅ Record Stripe payment transactions manually or via webhook
-- 🔒 Secure Stripe webhook verification
-- 🗃️ Store transactions in Firestore under `research/{projectDocId}/stripeTransactions`
-- 📦 Built using plain Node.js (no Express)
-- 🔧 Environment variable support via `.env`
-
+* Dynamic and responsive UI using Next.js and Tailwind CSS
+* Optimized font loading with `next/font` (Geist font)
+* Integration with the Resonance backend
 
 ## 🛠️ Requirements
 
-- Node.js (v14 or above)
-- Firebase Admin SDK credentials
-- Stripe account with webhook secret
+* Node.js (v14 or above)
+* npm or yarn
 
 ## ⚙️ Setup Instructions
 
-1. **Clone the Repository**
+1.  **Clone the Repository**
 
-```bash
-git https://github.com/nethmalgunawardhana/resonance_backend.git
-cd resonance_backend
+    ```bash
+    git clone [https://github.com/nethmalgunawardhana/resonance_backend.git](https://github.com/nethmalgunawardhana/resonance_backend.git) # Assuming both front and backend in same repo
+    cd resonance_backend #  You might have a separate frontend folder.  Adjust as necessary.
+    cd frontend # If your Next.js app is in a 'frontend' subdirectory
+    ```
 
+2.  **Install Dependencies**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+    ```bash
+    npm install
+    # or
+    yarn install
+    ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3.  **Configure Environment Variables**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+    Create a `.env.local` file in the root of the frontend directory and add any necessary frontend environment variables.  Example:
 
-## Learn More
+    ```
+    NEXT_PUBLIC_BACKEND_API_URL=http://localhost:3000/api #  Or your actual backend URL
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+    **Important:** Do not commit your `.env.local` file to version control.  Add it to your `.gitignore` file.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4.  **Run the Application**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    ```bash
+    npm run dev
+    # or
+    yarn dev
+    ```
 
-## Deploy on Vercel
+    This will start the Next.js development server.  Open your browser to the displayed URL (usually http://localhost:3000) to view the application.
+
+## 🚀 Deployment
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## 💻 Tech Stack (Frontend)
 
+* Frontend: Next.js with Tailwind CSS
 
----------- TECH STACK ----------
-
-* Frontend  : Next.js with TailwindCSS (for responsive, dynamic UI)
-* Backend   : Node.js (Express)
-* Database : Firebase Firestore 
-* AI/ML & Integration:
-    - LLM API (Gemini) for AI-powered research summarization and insights
-    - Google Scholar for real-time research paper indexing
-* Blockchain & Payments:
-    - Stripe integration and Blockchain for payments, donations, grant distribution
-* Deployment & Scaling 
-    - Vercel
-
-
-
----------- TEAM MEMEBERS ----------
+## 🤝 Team Members
 
 * Tharin Edirisinghe
 * Garuka Satharasinghe
 * Nethmal Gunawardhana
 * Harindu Hadithya
-
+* Sachintha Lakmin
