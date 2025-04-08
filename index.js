@@ -2,13 +2,16 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const arxivRoutes = require('./src/routes/arxiv.route');
+
+const projectRoutes = require('./src/routes/research.route');
+
+// Load environment variables
 const dotenv = require('dotenv');
 dotenv.config();
 const routes = require('./src/routes/index');
 const { errorHandler } = require('./src/middleware/errorHandler');
-
-// Load environment variables
-
+const researcherRoutes = require('./src/routes/researcher');
 
 // Initialize Express app
 const app = express();
@@ -23,6 +26,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // API Routes
 app.use('/api', routes);
+app.use('/api/researchers', researcherRoutes);
+app.use('/api/research', projectRoutes);
+app.use('/api', arxivRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
