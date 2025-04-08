@@ -3,50 +3,6 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { ApiResponse } = require('../utils/responseFormatter');
 
 const stripeTransactionsController = {
-  // Original method to record a Stripe transaction manually
-  async recordStripeTransaction(req, res, next) {
-    try {
-      const {
-        projectDocId, // Firestore research document ID
-        stripeCustomerId,
-        paymentIntentId,
-        amount,
-        currency,
-        status,
-        paymentMethod,
-        receiptUrl
-      } = req.body;
-
-      if (!projectDocId || !stripeCustomerId || !paymentIntentId || !amount || !currency || !status) {
-        throw new Error('Missing required fields');
-      }
-
-      const stripeTransaction = {
-        stripeCustomerId,
-        paymentIntentId,
-        amount,
-        currency,
-        status,
-        paymentMethod,
-        receiptUrl,
-        createdAt: new Date().toISOString()
-      };
-
-      const stripeTransactionRef = db
-        .collection('research')
-        .doc(projectDocId)
-        .collection('stripeTransactions');
-
-      await stripeTransactionRef.add(stripeTransaction);
-
-      res.status(200).json(ApiResponse.success({
-        message: 'Stripe transaction recorded successfully',
-        paymentIntentId
-      }));
-    } catch (error) {
-      next(error);
-    }
-  },
 
   async createStripeCheckoutSession(req, res, next) {
     try {
@@ -98,6 +54,53 @@ const stripeTransactionsController = {
       next(error);
     }
   },
+
+
+  // Original method to record a Stripe transaction manually
+  // async recordStripeTransaction(req, res, next) {
+  //   try {
+  //     const {
+  //       projectDocId, // Firestore research document ID
+  //       stripeCustomerId,
+  //       paymentIntentId,
+  //       amount,
+  //       currency,
+  //       status,
+  //       paymentMethod,
+  //       receiptUrl
+  //     } = req.body;
+
+  //     if (!projectDocId || !stripeCustomerId || !paymentIntentId || !amount || !currency || !status) {
+  //       throw new Error('Missing required fields');
+  //     }
+
+  //     const stripeTransaction = {
+  //       stripeCustomerId,
+  //       paymentIntentId,
+  //       amount,
+  //       currency,
+  //       status,
+  //       paymentMethod,
+  //       receiptUrl,
+  //       createdAt: new Date().toISOString()
+  //     };
+
+  //     const stripeTransactionRef = db
+  //       .collection('research')
+  //       .doc(projectDocId)
+  //       .collection('stripeTransactions');
+
+  //     await stripeTransactionRef.add(stripeTransaction);
+
+  //     res.status(200).json(ApiResponse.success({
+  //       message: 'Stripe transaction recorded successfully',
+  //       paymentIntentId
+  //     }));
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // },
+
 
   // Stripe webhook handler
   async handleStripeWebhook(req, res, next) {
@@ -183,4 +186,5 @@ const stripeTransactionsController = {
   
 };
 
-module.exports = { stripeTransactionsController };
+
+module.exports = {stripeTransactionsController};
