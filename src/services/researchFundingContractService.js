@@ -19,10 +19,12 @@ const researchFundingABI = [
   "function getProjectDetails(uint _id) public view returns (string memory, string memory, uint, address, bool)",
   "function getContractBalance() public view returns (uint)",
   "function withdrawFees() public",
-  "function getProjectTransactions(uint _id) public view returns (tuple(uint projectId, uint amount, address user, string txType, uint timestamp)[])"
+  "function getProjectTransactions(uint _id) public view returns (tuple(uint projectId, uint amount, address user, string txType, uint timestamp)[])",
+  "event ProjectCreated(uint256 id, string name, address recipient, bool isActive)"
 ];
 
 async function getEthPriceInUSD() {
+  // Try Alchemy first
   try {
     const response = await fetch('https://api.g.alchemy.com/prices/v1/tokens/by-symbol?symbols=ETH', {
       method: 'GET',
@@ -32,22 +34,47 @@ async function getEthPriceInUSD() {
       }
     });
 
-    if (!response.ok) {
-      throw new Error(`Error fetching ETH price: ${response.statusText}`);
+    if (response.ok) {
+      const data = await response.json();
+      const ethPriceData = data?.data?.find((token) => token.symbol === "ETH");
+
+      const price = parseFloat(ethPriceData?.prices?.[0]?.value);
+      if (!isNaN(price)) {
+        return price;
+      } else {
+        throw new Error("Invalid price format from Alchemy.");
+      }
+    } else {
+      console.warn(`Alchemy API failed: ${response.statusText}`);
     }
-
-    const data = await response.json();
-    const ethPriceData = data?.data?.find((token) => token.symbol === "ETH");
-
-    return parseFloat(ethPriceData?.prices?.[0]?.value);
   } catch (error) {
-    console.error('Failed to fetch ETH price from Alchemy Token Price API', error);
-    return null;
+    console.warn('Error fetching ETH price from Alchemy:', error);
   }
+
+  // Fallback to CoinGecko
+  try {
+    const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd");
+    if (!res.ok) {
+      throw new Error(`CoinGecko API failed: ${res.statusText}`);
+    }
+    const data = await res.json();
+    const price = parseFloat(data.ethereum.usd);
+    if (!isNaN(price)) {
+      return price;
+    } else {
+      throw new Error("Invalid price format from CoinGecko.");
+    }
+  } catch (fallbackError) {
+    console.error('Failed to fetch ETH price from CoinGecko:', fallbackError);
+  }
+
+  return null;
 }
 
 // Create the contract instance
 const researchFundingContract = new ethers.Contract(contractAddress, researchFundingABI, adminWallet);
+
+const ethersInterface = new ethers.Interface(researchFundingABI);
 
 // Service to create a project
 async function createProject(name, description, recipient) {
@@ -58,8 +85,23 @@ async function createProject(name, description, recipient) {
       recipient,
       { value: parseEther('0.005') } // Fee for creating a project
     );
-    await tx.wait(); // Wait for the transaction to be mined
-    return { success: true, transactionHash: tx.hash };
+    const receipt = await tx.wait();
+
+    let onChainProjectId = null;
+
+    for (const log of receipt.logs) {
+      try {
+        const parsedLog = ethersInterface.parseLog(log);
+        if (parsedLog.name === "ProjectCreated") {
+          onChainProjectId = parsedLog.args.id;
+          console.log("Project ID from event from blockchain:", projectId.toString());
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+        
+    return { success: true, transactionHash: tx.hash , onChainProjectId: Number(onChainProjectId) };
   } catch (error) {
     console.error(error);
     throw new Error('Failed to create project', error);
@@ -165,4 +207,5 @@ module.exports = {
   withdraw,
   getContractBalance,
   withdrawFees,
+  getEthPriceInUSD,
 };
