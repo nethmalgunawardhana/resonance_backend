@@ -3,7 +3,7 @@ const { db } = require('../config/firebase');
 exports.getRelevantResearchData = async (query) => {
   try {
     // Get all documents from researchProjects collection
-    const projectsSnapshot = await db.collection('researchProjects').get();
+    const projectsSnapshot = await db.collection('research').get();
     
     if (projectsSnapshot.empty) {
       console.log('No research projects found');

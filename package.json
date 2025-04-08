@@ -17,6 +17,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.0",
     "axios": "^1.8.4",
+    "body-parser": "^2.2.0",
     "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -33,6 +34,7 @@
     "stripe": "^18.0.0",
     "uuid": "^9.0.0",
     "xml2js": "^0.6.2"
+
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^0.15.10",

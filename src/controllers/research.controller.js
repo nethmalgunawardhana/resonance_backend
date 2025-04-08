@@ -27,7 +27,7 @@ exports.getResearchProjectById = async (req, res) => {
   try {
     const projectRef = db.collection('research').doc(id);
     const projectDoc = await projectRef.get();
-
+        
     if (!projectDoc.exists) {
       return res.status(404).json({ message: 'Project not found' });
     }
