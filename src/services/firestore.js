@@ -1,4 +1,4 @@
-// services/firestore.js
+
 const { db } = require('../config/firebase');
 
 const researchCollection = db.collection('research');
