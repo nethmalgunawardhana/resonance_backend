@@ -151,7 +151,7 @@ const stripeTransactionsController = {
           console.log("the data to save is  ")
 
           result = await fundingRef.add({
-            amountUSD: paymentIntent.amount_received,
+            amountUSD: paymentIntent.amount_received / 100,
             type: 'stripe/card',
             createdAt: new Date().toISOString(),
             user: userId,
