@@ -19,7 +19,8 @@ const researchFundingABI = [
   "function getProjectDetails(uint _id) public view returns (string memory, string memory, uint, address, bool)",
   "function getContractBalance() public view returns (uint)",
   "function withdrawFees() public",
-  "function getProjectTransactions(uint _id) public view returns (tuple(uint projectId, uint amount, address user, string txType, uint timestamp)[])"
+  "function getProjectTransactions(uint _id) public view returns (tuple(uint projectId, uint amount, address user, string txType, uint timestamp)[])",
+  "event ProjectCreated(uint256 id, string name, address recipient, bool isActive)"
 ];
 
 async function getEthPriceInUSD() {
@@ -49,6 +50,8 @@ async function getEthPriceInUSD() {
 // Create the contract instance
 const researchFundingContract = new ethers.Contract(contractAddress, researchFundingABI, adminWallet);
 
+const ethersInterface = new ethers.Interface(researchFundingABI);
+
 // Service to create a project
 async function createProject(name, description, recipient) {
   try {
@@ -58,8 +61,23 @@ async function createProject(name, description, recipient) {
       recipient,
       { value: parseEther('0.005') } // Fee for creating a project
     );
-    await tx.wait(); // Wait for the transaction to be mined
-    return { success: true, transactionHash: tx.hash };
+    const receipt = await tx.wait();
+
+    let onChainProjectId = null;
+
+    for (const log of receipt.logs) {
+      try {
+        const parsedLog = ethersInterface.parseLog(log);
+        if (parsedLog.name === "ProjectCreated") {
+          onChainProjectId = parsedLog.args.id;
+          console.log("Project ID from event from blockchain:", projectId.toString());
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+        
+    return { success: true, transactionHash: tx.hash , onChainProjectId: Number(onChainProjectId) };
   } catch (error) {
     console.error(error);
     throw new Error('Failed to create project', error);
