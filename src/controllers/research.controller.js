@@ -4,12 +4,20 @@ const { getResearchProjectByIdService } = require('../services/research.service'
 
 exports.getResearchProjects = async (req, res) => {
   try {
-    const snapshot = await db.collection('research').get();
+    const { category } = req.params;
+    console.log('Category:', category);
+
+    const snapshot = await db.collection('research').where('category', '==', category).get();
+
+    if (snapshot.empty) {
+      return res.status(404).json({ message: 'No research projects found' });
+    }
+
     const projects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.status(200).json(projects);
   } catch (error) {
     console.error('Error fetching projects:', error);
-    res.status(500).json({ error: 'Failed to fetch projects' });
+    res.status(500).json({ error: 'Research Projects Not Found' });
   }
 };
 
@@ -36,3 +44,21 @@ exports.getResearchProjectById = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch project' });
   }
 };
+
+
+exports.getTrendingResearchProject = async (req, res) => {
+  console.log('Fetching trending research projects...');
+  try {
+    const snapshot = await db.collection('research').orderBy('views', 'desc').limit(5).get();
+
+    if (snapshot.empty) {
+      return res.status(404).json({ message: 'No trending research projects found' });
+    }
+
+    const projects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.status(200).json(projects);
+  } catch (error) {
+    console.error('Error fetching trending projects:', error);
+    res.status(500).json({ error: 'Failed to fetch trending projects' });
+  }
+}
