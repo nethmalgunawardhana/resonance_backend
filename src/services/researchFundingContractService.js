@@ -24,6 +24,7 @@ const researchFundingABI = [
 ];
 
 async function getEthPriceInUSD() {
+  // Try Alchemy first
   try {
     const response = await fetch('https://api.g.alchemy.com/prices/v1/tokens/by-symbol?symbols=ETH', {
       method: 'GET',
@@ -33,18 +34,41 @@ async function getEthPriceInUSD() {
       }
     });
 
-    if (!response.ok) {
-      throw new Error(`Error fetching ETH price: ${response.statusText}`);
+    if (response.ok) {
+      const data = await response.json();
+      const ethPriceData = data?.data?.find((token) => token.symbol === "ETH");
+
+      const price = parseFloat(ethPriceData?.prices?.[0]?.value);
+      if (!isNaN(price)) {
+        return price;
+      } else {
+        throw new Error("Invalid price format from Alchemy.");
+      }
+    } else {
+      console.warn(`Alchemy API failed: ${response.statusText}`);
     }
-
-    const data = await response.json();
-    const ethPriceData = data?.data?.find((token) => token.symbol === "ETH");
-
-    return parseFloat(ethPriceData?.prices?.[0]?.value);
   } catch (error) {
-    console.error('Failed to fetch ETH price from Alchemy Token Price API', error);
-    return null;
+    console.warn('Error fetching ETH price from Alchemy:', error);
   }
+
+  // Fallback to CoinGecko
+  try {
+    const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd");
+    if (!res.ok) {
+      throw new Error(`CoinGecko API failed: ${res.statusText}`);
+    }
+    const data = await res.json();
+    const price = parseFloat(data.ethereum.usd);
+    if (!isNaN(price)) {
+      return price;
+    } else {
+      throw new Error("Invalid price format from CoinGecko.");
+    }
+  } catch (fallbackError) {
+    console.error('Failed to fetch ETH price from CoinGecko:', fallbackError);
+  }
+
+  return null;
 }
 
 // Create the contract instance
