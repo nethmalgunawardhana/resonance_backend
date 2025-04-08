@@ -42,6 +42,7 @@ const blockchainController = {
         fundingProjectId,
         amountEth,
         transactionHash,
+        type: 'eth',
         createdAt: new Date().toISOString()
       };
 
