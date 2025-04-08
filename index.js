@@ -20,8 +20,20 @@ const stripeWebhookRoute = require('./src/routes/stripeWebhookRoutes');
 const app = express();
 const port = process.env.PORT || 5000;
 
+// CORS setup: Move it above the other middleware to ensure it applies to all routes
+const allowedOrigins = ['https://resonance-devthon.netlify.app'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
+
 // Middleware
-app.use(cors());
 app.use(helmet());
 app.use(morgan('dev'));
 
@@ -37,7 +49,6 @@ app.use('/api/alex/researchers', researcherRoutes);
 app.use('/api/research', projectRoutes);
 app.use('/api', arxivRoutes);
 app.use('/api/stripe', stripeRoutes);
-
 
 // Error handling middleware
 app.use(errorHandler);
@@ -59,18 +70,5 @@ app.use((req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
-const allowedOrigins = ['https://resonance-devthon.netlify.app'];
-
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
-}));
-
 
 module.exports = app;
