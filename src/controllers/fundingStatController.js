@@ -32,9 +32,10 @@ exports.getFundingTransactions = async (req, res) => {
     console.log('Funding transactions:', fundingTransactions);
     // Calculate total funding
     const totalFunding = fundingTransactions.reduce((acc, transaction) => {
-        return acc + (transaction.type === 'eth' ? parseFloat(transaction.amountUSD) : parseFloat(transaction.amount));
-    }
-    , 0);
+        const amount = parseFloat(transaction.amountUSD);
+        return acc + (isNaN(amount) ? 0 : amount);
+    }, 0);
+
     console.log('Total funding:', totalFunding);
     // Calculate number of transactions
     const numberOfTransactions = fundingTransactions.length;
