@@ -35,6 +35,10 @@ app.use('/api', arxivRoutes);
 // Error handling middleware
 app.use(errorHandler);
 
+app.get('/', (req, res) => {
+  res.send('Hello from Resonance Backend!');
+});
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({
