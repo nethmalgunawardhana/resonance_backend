@@ -183,4 +183,5 @@ module.exports = {
   withdraw,
   getContractBalance,
   withdrawFees,
+  getEthPriceInUSD,
 };

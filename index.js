@@ -2,16 +2,18 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const arxivRoutes = require('./src/routes/arxiv.route');
-
-const projectRoutes = require('./src/routes/research.route');
 
 // Load environment variables
 const dotenv = require('dotenv');
 dotenv.config();
-const routes = require('./src/routes/index');
+
 const { errorHandler } = require('./src/middleware/errorHandler');
+
+const routes = require('./src/routes/index');
 const researcherRoutes = require('./src/routes/researcher');
+const arxivRoutes = require('./src/routes/arxiv.route');
+const projectRoutes = require('./src/routes/research.route');
+
 
 // Initialize Express app
 const app = express();
