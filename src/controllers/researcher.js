@@ -11,7 +11,11 @@ exports.getResearcher = async (req, res) => {
 
         const works = await fetchResearchWorks(researcherInfo.works_api_url);
         console.log('Research Works:', works);
-        res.status(200).json(researcherInfo);
+        const researcherData = {
+            ...researcherInfo,
+            works,
+        };
+        res.status(200).json(researcherData);
     }
     catch (error) {
         console.error('Error fetching researcher info:', error);
