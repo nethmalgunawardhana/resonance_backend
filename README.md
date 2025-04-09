@@ -6,15 +6,15 @@ This is the Node.js backend application for the Resonance project. It handles St
 
 ## 🚀 Features
 
-✅ Record Stripe payment transactions manually or via webhook  
-🔒 Secure Stripe webhook verification  
-🗃️ Store transactions in Firestore under `research/{projectDocId}/stripeTransactions`  
-💽 AI-powered research recommendation using Gemini API  
-🔍 Index and fetch papers from **Google Scholar**, **OpenAlex**, and **Arxiv**  
-💰 Stripe integration for payments, donations, and grants  
-🧠 Serve LLM responses for research recommendation  
 🪙 Blockchain payment logging using Smart Contracts (ResearchFund)
-
+🧠 Serve LLM responses for research recommendation 
+✅ Record Stripe payment transactions manually or via webhook  
+💽 AI-powered research recommendation using Gemini API  
+🔒 Secure Stripe webhook verification  
+💰 Stripe integration for payments, donations, and grants  
+🔍 Index and fetch papers from **Google Scholar**, **OpenAlex**, and **Arxiv**  
+🗃️ Store transactions in Firestore under `research/{projectDocId}/stripeTransactions`  
+ 
 ---
 
 ## 🛠️ Requirements
