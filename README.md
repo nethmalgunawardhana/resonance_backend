@@ -1,70 +1,125 @@
-# 🎯 Resonance Frontend: Next.js Application
+# ⚙️ Resonance Backend: Node.js for Stripe & Firestore
 
-This is the Next.js frontend application for the Resonance project. It is a dynamic and responsive user interface built with Next.js and Tailwind CSS.
+This is the Node.js backend application for the Resonance project. It handles Stripe payment transactions, blockchain smart contract integrations, and AI-powered research operations.
+
+---
 
 ## 🚀 Features
 
-* Dynamic and responsive UI using Next.js and Tailwind CSS
-* Optimized font loading with `next/font` (Geist font)
-* Integration with the Resonance backend
+✅ Record Stripe payment transactions manually or via webhook  
+🔒 Secure Stripe webhook verification  
+🗃️ Store transactions in Firestore under `research/{projectDocId}/stripeTransactions`  
+💽 AI-powered research recommendation using Gemini API  
+🔍 Index and fetch papers from **Google Scholar**, **OpenAlex**, and **Arxiv**  
+💰 Stripe integration for payments, donations, and grants  
+🧠 Serve LLM responses for research recommendation  
+🪙 Blockchain payment logging using Smart Contracts (ResearchFund)
+
+---
 
 ## 🛠️ Requirements
 
-* Node.js (v14 or above)
-* npm or yarn
+- Node.js (v14 or above)  
+- npm or yarn  
+- Firebase Admin SDK service account key  
+- Stripe API keys  
+- Gemini API key  
+- Infura Project ID (for Sepolia network)  
+- Smart contract ABI and address  
+
+---
 
 ## ⚙️ Setup Instructions
 
-1.  **Clone the Repository**
+### 1. Clone the Repository
 
-    ```bash
-    git clone [https://github.com/nethmalgunawardhana/resonance_backend.git](https://github.com/nethmalgunawardhana/resonance_backend.git) # Assuming both front and backend in same repo
-    cd resonance_backend #  You might have a separate frontend folder.  Adjust as necessary.
-    cd frontend # If your Next.js app is in a 'frontend' subdirectory
-    ```
+```bash
+git clone https://github.com/nethmalgunawardhana/resonance_backend.git
+cd resonance_backend
+```
 
-2.  **Install Dependencies**
+### 2. Install Dependencies
 
-    ```bash
-    npm install
-    # or
-    yarn install
-    ```
+```bash
+npm install
+# or
+yarn install
+```
 
-3.  **Configure Environment Variables**
+### 3. Configure Environment Variables
 
-    Create a `.env.local` file in the root of the frontend directory and add any necessary frontend environment variables.  Example:
+Create a `.env` file in the root folder and add the following:
 
-    ```
-    NEXT_PUBLIC_BACKEND_API_URL=http://localhost:3000/api #  Or your actual backend URL
-    ```
+```
+STRIPE_SECRET_KEY=sk_live_your_live_secret_key
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+FIREBASE_SERVICE_ACCOUNT_PATH=/path/to/your/serviceAccountKey.json
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+INFURA_API_KEY=YOUR_INFURA_PROJECT_ID
+CONTRACT_ADDRESS=YOUR_SMART_CONTRACT_ADDRESS
+ETHEREUM_PRIVATE_KEY=YOUR_PRIVATE_KEY
+```
 
-    **Important:** Do not commit your `.env.local` file to version control.  Add it to your `.gitignore` file.
+> ❗ Do not commit your `.env` file to version control.
 
-4.  **Run the Application**
+### 4. Run the Backend
 
-    ```bash
-    npm run dev
-    # or
-    yarn dev
-    ```
+```bash
+npm start
+# or
+node index.js
+```
 
-    This will start the Next.js development server.  Open your browser to the displayed URL (usually http://localhost:3000) to view the application.
+The server will run locally on `http://localhost:5000`.
 
-## 🚀 Deployment
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ⚙️ Configuration Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Stripe**: Set up webhooks on the Stripe dashboard to hit your `/webhook` endpoint.
+- **Firebase**: Ensure Firestore security rules match your API access patterns.
+- **Gemini API**: Required for summarization and research recommendation.
+- **Blockchain**: Use `ethers.js` or `web3.js` to interact with ResearchFund smart contract on Sepolia testnet.
 
-## 💻 Tech Stack (Frontend)
+---
 
-* Frontend: Next.js with Tailwind CSS
+## 📚 Tech Stack (Backend)
 
-## 🤝 Team Members
+| Area                | Tech Stack                                     |
+|---------------------|------------------------------------------------|
+| Backend             | Node.js                                        |
+| Database            | Firebase Firestore                             |
+| Authentication      | Firebase Auth                                  |
+| Payments            | Stripe                                         |
+| AI/LLM              | Gemini API                                     |
+| Research Indexing   | OpenAlex, Arxiv, Google Scholar                |
+| Blockchain          | Sepolia Ethereum Testnet, Solidity, Metawallet|
+| Contract            | ResearchFund Smart Contract                    |
+| Deployment          | Vercel                                         |
 
-* Tharin Edirisinghe
-* Garuka Satharasinghe
-* Nethmal Gunawardhana
-* Harindu Hadithya
-* Sachintha Lakmin
+---
+
+## 📂 Folder Structure
+
+```
+resonance_backend/
+├── controllers/           # Route logic
+├── routes/                # API routes
+├── services/              # Stripe, AI, Blockchain services
+├── middleware/            # Webhook auth, error handlers
+├── utils/                 # Utility functions
+├── index.js               # Entry point
+├── .env                   # Environment variables
+└── package.json
+```
+
+---
+
+## 👨‍💻 Team Members
+
+- Tharin Edirisinghe  
+- Garuka Satharasinghe  
+- Nethmal Gunawardhana  
+- Harindu Hadithya  
+- Sachintha Lakmin  
+
